@@ -20,8 +20,9 @@ import {
 } from "@/components/ui/popover"
 import { useQuery } from "@tanstack/react-query"
 import { ListCoins } from "@/lib/controllers/binance"
-
+import { useClientStore } from "@/stores/client-store"
 export function AssetList() {
+  const clientStore = useClientStore((state)=>state);
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
 
@@ -60,6 +61,7 @@ export function AssetList() {
     value={coin}
     onSelect={(currentValue) => {
       setValue(currentValue === value ? "" : currentValue)
+      clientStore.setAsset(currentValue);
       setOpen(false)
     }}
   >
