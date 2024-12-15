@@ -11,8 +11,9 @@ export function ExpirationDate() {
   
   return (
     <div>
+      <p className="mb-2">Expiration date</p>
       <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as "datetime" | "duration")}>
-        <TabsList>
+        <TabsList className="mb-2">
           <TabsTrigger value="duration">Select Duration</TabsTrigger>
           <TabsTrigger value="datetime">Pick Date & Time</TabsTrigger>
         </TabsList>

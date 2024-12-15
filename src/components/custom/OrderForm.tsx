@@ -11,9 +11,46 @@ import {
 import { Button } from "@/components/ui/button";
 import QuantityPriceInput from "./QuantityPrice";
 import { ExpirationDate } from "./ExpirationDate";
+import { z } from "zod";
+import { useOrderFormStore } from "@/stores/order-form-store";
+import { toast } from "sonner";
 
 export default function OrderForm() {
   const [isBuy, setIsBuy] = useState(false);
+  const orderFormState = useOrderFormStore();
+
+  const orderFormSchema = z.object({
+    symbol: z.string().nonempty("Symbol is required"),
+    price: z.number().positive("Price must be a positive number"),
+    quantity: z.number().min(1, "Quantity must be at least be 1").max(100, "Quantity must not exceed 100"),
+    orderExpiry: z.date().refine(date => date > new Date(), {
+      message: "Expiration date must be in the future",
+    })
+  });
+  
+  function handleFormSubmission() {
+    const SIDE = isBuy ? "BUY" : "SELL";
+  
+    const requestBody = {
+      symbol: "BTCUSD",
+      side: SIDE,
+      type: "MARKET",
+      price: orderFormState.price,
+      quantity: orderFormState.quantity,
+      orderListId: -1, // recommended by Binance
+      orderExpiry: orderFormState.expirationDate,
+    };
+  
+    const validation = orderFormSchema.safeParse(requestBody);
+  
+    if (!validation.success) {
+      toast.error(validation.error.issues.map((issue) => issue.message).join(", "));
+      return; // Add return to prevent proceeding further if validation fails
+    }
+  
+    console.log(requestBody);
+  }
+  
 
   return (
     <Card className="max-w-sm p-4 shadow-lg border rounded-lg">
@@ -39,6 +76,7 @@ export default function OrderForm() {
               ? "bg-green-600 hover:bg-green-500"
               : "bg-red-600 hover:bg-red-500"
           }`}
+          onClick={handleFormSubmission}
         >
           {isBuy ? "Buy" : "Sell"}
         </Button>

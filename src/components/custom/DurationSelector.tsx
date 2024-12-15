@@ -14,7 +14,7 @@ const durationMap = {
 export default function DurationSelector() {
     const [durationQty, setDurationQty] = React.useState<number>(1);
     const [durationUnit, setDurationUnit] = React.useState<keyof typeof durationMap>("m");
-    const { setExpirationDate } = useOrderFormStore();
+    const orderFormState = useOrderFormStore();
     
     const handleDurationChange = (durationQty: number, durationUnit: string) => {
       const now = new Date();
@@ -24,7 +24,7 @@ export default function DurationSelector() {
         d: 24 * 60 * 60 * 1000,
         w: 7 * 24 * 60 * 60 * 1000,
       }[durationUnit];
-      setExpirationDate(new Date(now.getTime() + durationQty * multiplier));
+      orderFormState.setExpirationDate(new Date(now.getTime() + durationQty * multiplier));
     };
   
     React.useEffect(()=>{
