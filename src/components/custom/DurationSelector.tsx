@@ -32,13 +32,13 @@ export default function DurationSelector() {
     },[durationQty,durationUnit]);
   
     return (
-      <div className="flex items-center">
+      <div className="flex items-center w-full">
         <div className="relative flex items-center border rounded-md overflow-hidden">
           <Input
             type="number"
             id="duration-time-qty"
             placeholder="1"
-            className="border-0 focus:ring-0 rounded-none w-20"
+            className="border-0 focus:ring-0 rounded-none "
             value={durationQty}
             onChange={(e) => setDurationQty(Number(e.target.value))}
           />
