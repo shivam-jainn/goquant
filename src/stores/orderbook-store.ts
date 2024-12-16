@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 export enum e_OrderBookAccountType {
-    client,
-    accmgr // account manager
+    client = "client",
+    accmgr = "accmgr",
 }
 
 export enum e_OrderSide {
