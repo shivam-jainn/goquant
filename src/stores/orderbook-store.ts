@@ -1,4 +1,3 @@
-import { Base_Trade } from '@/lib/controllers/orderbook';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
@@ -21,6 +20,13 @@ export enum e_OrderStatus {
 export enum e_OrderType {
     LIMIT,
     MARKET
+}
+
+export interface Base_Trade{
+    signature : string;
+    apiKey : string;
+    timestamp : string;
+    symbol : string;
 }
 
 export interface OrderTrade extends Base_Trade {
