@@ -15,23 +15,22 @@ interface DataTableToolbarProps<TData> {
 }
 
 const orderStatuses = [
-    { value: e_OrderStatus.PENDING.toString(), label: "Pending" },
-    { value: e_OrderStatus.FULFILLED.toString(), label: "Fulfilled" },
-    { value: e_OrderStatus.CANCELLED.toString(), label: "Cancelled" },
-  ];
-  
-  const orderSides = [
-    { value: e_OrderSide.BUY.toString(), label: "Buy" },
-    { value: e_OrderSide.SELL.toString(), label: "Sell" },
-  ];
-  
+  { value: e_OrderStatus.PENDING.toString(), label: "Pending" },
+  { value: e_OrderStatus.FULFILLED.toString(), label: "Fulfilled" },
+  { value: e_OrderStatus.CANCELLED.toString(), label: "Cancelled" },
+];
+
+const orderSides = [
+  { value: e_OrderSide.BUY.toString(), label: "Buy" },
+  { value: e_OrderSide.SELL.toString(), label: "Sell" },
+];
+
 export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between overflow-x-auto custom-scrollbar p-4">
       <div className="flex flex-1 items-center space-x-2">
-
         <Input
           placeholder="Filter by symbol..."
           value={(table.getColumn("symbol")?.getFilterValue() as string) ?? ""}
