@@ -1,16 +1,22 @@
-"use client";
-import { useCounterStore } from "@/stores/counter-store";
+import OrderForm from "@/components/custom/OrderForm";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable"
+import CurrentOrder from "@/components/custom/Tables/Client/CurrentOrder";
 
 export default function Page() {
-
-  const {count,addCount,remCount} = useCounterStore((state) => state);
-
   return (
-    <main>
-      <h1>Counter</h1>
-      <div>{count}</div>
-      <button onClick={addCount}>Increase</button>
-      <button onClick={remCount}>Decrease</button>
-    </main>
+    <>    
+<ResizablePanelGroup direction="horizontal" className="w-full h-screen/2 p-2">
+    <ResizablePanel className="p-2" defaultSize={70}>1</ResizablePanel>
+    <ResizablePanel className="p-2" defaultSize={30} maxSize={30} minSize={25}>
+      <OrderForm />
+    </ResizablePanel>
+</ResizablePanelGroup>
+<CurrentOrder />
+    </>
+    
   );
 }
