@@ -13,20 +13,23 @@ export default function OrderMatcher() {
   
   const filteredBuyOrders = useMemo(() =>
     orderBookStore.buyOrders.filter(
-      (order) => order.symbol === orderBookStore.asset &&
-        order.orderStatus !== e_OrderStatus.CANCELLED
+      (order) => 
+        order.symbol === orderBookStore.asset &&
+        order.orderStatus !== e_OrderStatus.CANCELLED &&
+        order.orderStatus !== e_OrderStatus.FULFILLED
     ),
     [orderBookStore.buyOrders, orderBookStore.asset]
   );
 
   const filteredSellOrders = useMemo(() =>
     orderBookStore.sellOrders.filter(
-      (order) => order.symbol === orderBookStore.asset &&
-        order.orderStatus !== e_OrderStatus.CANCELLED
+      (order) => 
+        order.symbol === orderBookStore.asset &&
+        order.orderStatus !== e_OrderStatus.CANCELLED &&
+        order.orderStatus !== e_OrderStatus.FULFILLED
     ),
     [orderBookStore.sellOrders, orderBookStore.asset]
   );
-
 
   const handleOrderHover = React.useCallback((order) => {
     setHoveredBuyOrder(order);
