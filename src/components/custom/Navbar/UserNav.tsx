@@ -17,7 +17,7 @@ import {
   import { useOrderBookStore, e_OrderBookAccountType } from "@/stores/orderbook-store";
   
   export function UserNav() {
-    const {role,setRole} = useOrderBookStore();
+    const {role,setRole,reset} = useOrderBookStore();
   
     const toggleAccountType = () => {
       setRole(
@@ -70,6 +70,12 @@ import {
                     ? "Client"
                     : "Account Manager"}
                 </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={()=>reset()}
+                className="flex items-center justify-between"
+              >
+                <span>Reset state</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
