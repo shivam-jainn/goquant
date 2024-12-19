@@ -35,31 +35,32 @@ body {
     --radius: 0.5rem;
   }
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: 24 9% 10%; /* Dark neutral close to bg-zinc-800 */
+    --foreground: 210 20% 95%; /* Light neutral for text */
+    --card: 24 9% 10%; /* Match background for consistency */
+    --card-foreground: 210 20% 95%; /* Same as foreground */
+    --popover: 24 9% 10%; /* Match background */
+    --popover-foreground: 210 20% 95%; /* Same as foreground */
+    --primary: 210 15% 40%; /* Muted blue for primary */
+    --primary-foreground: 210 20% 95%; /* Light neutral */
+    --secondary: 24 10% 16%; /* Slightly lighter than background */
+    --secondary-foreground: 210 20% 95%;
+    --muted: 24 10% 16%; /* Same as secondary */
+    --muted-foreground: 210 15% 70%; /* Softer light text */
+    --accent: 210 15% 40%; /* Matches primary */
+    --accent-foreground: 210 20% 95%; 
+    --destructive: 0 60% 40%; /* Neutral red for destructive elements */
+    --destructive-foreground: 210 20% 95%;
+    --border: 24 10% 16%; /* Matches secondary */
+    --input: 24 10% 16%; /* Matches secondary */
+    --ring: 210 15% 60%; /* Subtle blue glow for focus rings */
+    --chart-1: 12 70% 55%; /* Warm orange for charts */
+    --chart-2: 160 50% 45%; /* Muted green for charts */
+    --chart-3: 30 70% 50%; /* Neutral yellow for charts */
+    --chart-4: 280 50% 60%; /* Purple for charts */
+    --chart-5: 340 70% 50%; /* Muted red for charts */
   }
+  
 }
 
 @layer base {

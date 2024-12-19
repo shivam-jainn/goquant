@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/themes/theme-provider";
 import QueryProviders from "./queryproviders";
 import { Toaster } from "@/components/ui/sonner";
+import { UserNav } from "@/components/custom/Navbar/UserNav";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,6 +27,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProviders>
+            <UserNav />
             {children}
             <Toaster richColors/>
           </QueryProviders>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -16,11 +16,16 @@ import { useOrderFormStore } from "@/stores/order-form-store";
 import { toast } from "sonner";
 import { e_OrderSide, e_OrderStatus, e_OrderType, useOrderBookStore } from "@/stores/orderbook-store";
 import { v4 as uuidv4 } from 'uuid';
+import { cn } from "@/lib/utils";
 
 export default function OrderForm() {
   const [isBuy, setIsBuy] = useState(false);
   const orderFormState = useOrderFormStore();
   const orderBookState = useOrderBookStore();
+
+  useEffect(()=>{
+    console.log(orderBookState.asset)
+  },[orderBookState.asset])
 
   const orderFormSchema = z.object({
     id: z.string().uuid(),
@@ -31,8 +36,7 @@ export default function OrderForm() {
     orderStatus: z.nativeEnum(e_OrderStatus),
     price: z.number().positive("Price must be a positive number"),
     qty: z.number()
-      .min(1, "Quantity must be at least 1")
-      .max(100, "Quantity must not exceed 100"),
+    .gt(0, "Quantity must be greater than 0"),  
     orderListId: z.number().int(),
     orderExpiry: z.date().refine((date) => date > new Date(), {
       message: "Expiration date must be in the future",
@@ -49,7 +53,7 @@ export default function OrderForm() {
     const requestBody = {
       id: uuidv4(),
       orderId: uuidv4(),
-      symbol: "AAPL",
+      symbol: orderBookState.asset as string,
       orderSide: SIDE,
       orderType: e_OrderType.MARKET,
       orderStatus: e_OrderStatus.PENDING,
@@ -62,6 +66,8 @@ export default function OrderForm() {
       signature: "a-signature-string",
       apiKey: process.env.BINANCE_API_KEY ?? "an-api-key",
     };
+
+    console.log(requestBody)
 
     const validation = orderFormSchema.safeParse(requestBody);
 
@@ -77,29 +83,30 @@ export default function OrderForm() {
   }
 
   return (
-    <Card className=" p-4 shadow-lg border rounded-lg">
+    <Card className="bg-zinc-800 shadow-lg rounded-lg h-full">
       <CardHeader>
-        <CardTitle className="flex justify-between items-center">
-          <p className="text-xl font-medium">
+        <CardTitle className="flex justify-between items-center mb-4">
+          <p className="text-xl font-semibold text-white">
             {isBuy ? "Buy Order" : "Sell Order"}
           </p>
           <CustomSwitch isBuy={isBuy} onToggle={() => setIsBuy(!isBuy)} />
         </CardTitle>
-        <CardDescription className="text-gray-500">
-          Place your {isBuy ? "Buy" : "Sell"} order here.
+        <CardDescription className="text-zinc-400 mb-4">
+          Place your {isBuy ? "Buy" : "Sell"} order for {orderBookState.asset || 'an asset'}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-6">
+      <CardContent className="space-y-8 py-4">
         <QuantityPriceInput />
         <ExpirationDate />
       </CardContent>
-      <CardFooter>
+      <CardFooter className="pt-5">
         <Button
-          className={`w-full py-2 rounded-md text-lg ${
-            isBuy
-              ? "bg-green-600 hover:bg-green-500"
-              : "bg-red-600 hover:bg-red-500"
-          }`}
+          className={cn(
+            "w-full py-2 rounded-md text-lg font-semibold",
+            isBuy 
+              ? "bg-green-600 hover:bg-green-700 text-white" 
+              : "bg-red-600 hover:bg-red-700 text-white"
+          )}
           onClick={handleFormSubmission}
         >
           {isBuy ? "Buy" : "Sell"}
@@ -118,21 +125,17 @@ function CustomSwitch({
 }) {
   return (
     <div
-      className={`relative flex h-8 w-24 cursor-pointer items-center rounded-full bg-gray-200 transition-colors duration-300 ${
-        isBuy ? "bg-green-500" : "bg-red-500"
-      }`}
+      className={cn(
+        "relative flex h-8 w-24 cursor-pointer items-center rounded-full transition-colors duration-300",
+        isBuy ? "bg-green-600/30" : "bg-red-600/30"
+      )}
       onClick={onToggle}
     >
       <div
-        className={`absolute top-0 bottom-0 left-0 right-0 rounded-full ${
-          isBuy ? "bg-green-500" : "bg-red-500"
-        }`}
-      ></div>
-
-      <div
-        className={`absolute z-10 h-6 w-8 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+        className={cn(
+          "absolute z-10 h-6 w-8 bg-white rounded-full shadow-md transform transition-transform duration-300",
           isBuy ? "translate-x-14" : "translate-x-3"
-        }`}
+        )}
       ></div>
 
       <div className="absolute z-10 flex gap-3 w-full justify-between px-3 text-xs font-bold text-white uppercase">
