@@ -5,6 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { OrderTrade } from "@/stores/orderbook-store";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
+import { Badge } from "@/components/ui/badge";
 
 // Helper functions for label mapping
 const getOrderStatusLabel = (status: e_OrderStatus): string => {
@@ -52,18 +53,11 @@ export const columns: ColumnDef<OrderTrade>[] = [
     cell: ({ getValue }) => {
       const status = getValue() as e_OrderStatus;
       return (
-        <span
-          style={{
-            color:
-              status === e_OrderStatus.PENDING
-                ? "orange"
-                : status === e_OrderStatus.FULFILLED
-                ? "green"
-                : "red",
-          }}
+        <Badge
+          className={`px-2 rounded-full ${status===e_OrderStatus.PENDING?"bg-orange-700/30 text-orange-400":status===e_OrderStatus.FULFILLED?"bg-green-700/30 text-green-400":"bg-red-700/30 text-red-400"}`}
         >
           {getOrderStatusLabel(status)}
-        </span>
+        </Badge>
       );
     },
     filterFn: (row, id, value) => {
@@ -78,18 +72,19 @@ export const columns: ColumnDef<OrderTrade>[] = [
     ),
     cell: ({ getValue }) => {
       const side = getValue() as e_OrderSide;
-      // console.log(side)
       return (
-        <span style={{ color: side === e_OrderSide.BUY ? "green" : "red" }}>
+        <Badge
+          className={`px-2 rounded-full ${side === e_OrderSide.BUY ? "bg-green-700/30 text-green-400" : side === e_OrderSide.SELL ? "bg-red-700/30 text-red-400" : "bg-gray-700/30 text-gray-400"}`}
+        >
           {getOrderSideLabel(side)}
-        </span>
+        </Badge>
       );
     },
     filterFn: (row, id, value) => {
-      const orderSideValue:number = row.getValue(id); 
+      const orderSideValue: number = row.getValue(id);
       return value.includes(orderSideValue.toString());
     },
-  },
+  },  
   {
     accessorKey: "qty",
     header: ({ column }) => (

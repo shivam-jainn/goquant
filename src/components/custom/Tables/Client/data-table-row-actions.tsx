@@ -17,6 +17,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { e_OrderStatus, useOrderBookStore } from "@/stores/orderbook-store"
 
 
 interface DataTableRowActionsProps<TData> {
@@ -26,7 +27,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-
+  const orderBookState = useOrderBookStore();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -39,13 +40,10 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
+        <DropdownMenuItem disabled={row.original.orderStatus===e_OrderStatus.CANCELLED}>Edit</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+        <DropdownMenuItem onClick={()=>orderBookState.cancelOrder(row.original.orderId)} disabled={row.original.orderStatus===e_OrderStatus.CANCELLED}>
+          Cancel
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
