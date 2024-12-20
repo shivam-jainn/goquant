@@ -54,8 +54,8 @@ const OrderAdjustmentStep = ({ buyOrder, sellOrder, onAdjustmentSelect, onBack }
               <div className="flex items-center">
                 <span className="text-zinc-400 w-20">Price:</span>
                 <span className="font-medium">
-                  ${buyOrder.price} {' → '} 
-                  <span className="text-blue-400">${sellOrder.price}</span>
+                  ${formatNumber(buyOrder.price, 'price')} {' → '} 
+                  <span className="text-blue-400">${formatNumber(sellOrder.price, 'price')}</span>
                 </span>
               </div>
             )}
@@ -64,8 +64,8 @@ const OrderAdjustmentStep = ({ buyOrder, sellOrder, onAdjustmentSelect, onBack }
               <div className="flex items-center">
                 <span className="text-zinc-400 w-20">Quantity:</span>
                 <span className="font-medium">
-                  {buyOrder.qty} {' → '} 
-                  <span className="text-blue-400">{sellOrder.qty}</span>
+                  {formatNumber(buyOrder.qty, 'qty')} {' → '} 
+                  <span className="text-blue-400">{formatNumber(sellOrder.qty, 'qty')}</span>
                 </span>
               </div>
             )}
@@ -90,8 +90,8 @@ const OrderAdjustmentStep = ({ buyOrder, sellOrder, onAdjustmentSelect, onBack }
               <div className="flex items-center">
                 <span className="text-zinc-400 w-20">Price:</span>
                 <span className="font-medium">
-                  ${sellOrder.price} {' → '} 
-                  <span className="text-blue-400">${buyOrder.price}</span>
+                  ${formatNumber(sellOrder.price, 'price')} {' → '} 
+                  <span className="text-blue-400">${formatNumber(buyOrder.price, 'price')}</span>
                 </span>
               </div>
             )}
@@ -100,8 +100,8 @@ const OrderAdjustmentStep = ({ buyOrder, sellOrder, onAdjustmentSelect, onBack }
               <div className="flex items-center">
                 <span className="text-zinc-400 w-20">Quantity:</span>
                 <span className="font-medium">
-                  {sellOrder.qty} {' → '} 
-                  <span className="text-blue-400">{buyOrder.qty}</span>
+                  {formatNumber(sellOrder.qty, 'qty')} {' → '} 
+                  <span className="text-blue-400">{formatNumber(buyOrder.qty, 'qty')}</span>
                 </span>
               </div>
             )}
@@ -121,6 +121,21 @@ const OrderAdjustmentStep = ({ buyOrder, sellOrder, onAdjustmentSelect, onBack }
       </div>
     </div>
   );
+};
+
+const formatNumber = (value: number, type: 'price' | 'qty' | 'total', precision: number = 2) => {
+  if (!value) return '0';
+
+  switch (type) {
+    case 'price':
+      return value.toFixed(precision);
+    case 'qty':
+      return value.toFixed(precision);
+    case 'total':
+      return value.toFixed(precision);
+    default:
+      return value.toFixed(precision);
+  }
 };
 
 const MatchModal = ({ open, buyOrder, matchingSellOrders, onClose }) => {
@@ -152,9 +167,6 @@ const MatchModal = ({ open, buyOrder, matchingSellOrders, onClose }) => {
 
   const handleConfirmMatch = () => {
     if (selectedOrder && buyOrder) {
-      console.log(selectedOrder);
-      console.log(buyOrder);
-      console.log(adjustedValues);
       const buyOrderUpdate = adjustedValues ? 
         { 
           orderStatus: e_OrderStatus.FULFILLED,
@@ -199,16 +211,16 @@ const MatchModal = ({ open, buyOrder, matchingSellOrders, onClose }) => {
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div>
                   <span className="text-zinc-400">Price:</span>
-                  <span className="ml-2 font-medium">${buyOrder.price}</span>
+                  <span className="ml-2 font-medium">${formatNumber(buyOrder.price, 'price')}</span>
                 </div>
                 <div>
                   <span className="text-zinc-400">Quantity:</span>
-                  <span className="ml-2 font-medium">{buyOrder.qty}</span>
+                  <span className="ml-2 font-medium">{formatNumber(buyOrder.qty, 'qty')}</span>
                 </div>
                 <div>
                   <span className="text-zinc-400">Total:</span>
                   <span className="ml-2 font-medium">
-                    ${(buyOrder.price * buyOrder.qty).toFixed(2)}
+                    ${formatNumber(buyOrder.price * buyOrder.qty, 'total')}
                   </span>
                 </div>
               </div>
@@ -217,71 +229,84 @@ const MatchModal = ({ open, buyOrder, matchingSellOrders, onClose }) => {
             <div className="space-y-4">
               <h4 className="text-sm font-medium text-zinc-400">Best Matches</h4>
               <div className="grid gap-4">
-                {matchingSellOrders.map((sellOrder) => (
-                  <Card
-                    key={sellOrder.orderId}
-                    className={cn(
-                      "p-4 cursor-pointer transition-all",
-                      "border-zinc-700 hover:border-blue-500",
-                      selectedOrder?.orderId === sellOrder.orderId && "border-blue-500 bg-blue-500/10"
-                    )}
-                    onClick={() => handleOrderSelect(sellOrder)}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "text-xs",
-                          sellOrder.matchPercentage >= 90 ? "bg-green-500/20 text-green-400" :
-                            sellOrder.matchPercentage >= 70 ? "bg-yellow-500/20 text-yellow-400" :
-                              "bg-red-500/20 text-red-400"
-                        )}
-                      >
-                        {sellOrder.matchPercentage}% Match
-                      </Badge>
-                      <span className="text-xs text-zinc-400">ID: {sellOrder.orderId}</span>
-                    </div>
+                {matchingSellOrders.map((sellOrder) => {
+                  const qtyDiff = Math.round((sellOrder.qty - buyOrder.qty) * 100) / 100;
+                  const priceDiff = sellOrder.price - buyOrder.price;
+                  const matchPercentage = 100 - ((Math.abs(qtyDiff) / buyOrder.qty + Math.abs(priceDiff) / buyOrder.price) / 2 * 100);
 
-                    <div className="grid grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <span className="text-zinc-400">Price:</span>
-                        <span className={cn(
-                          "ml-2 font-medium",
-                          sellOrder.priceDiff > 0 ? "text-red-400" :
-                            sellOrder.priceDiff < 0 ? "text-green-400" : "text-white"
-                        )}>
-                          ${sellOrder.price}
-                          {sellOrder.priceDiff !== 0 && (
-                            <span className="text-xs ml-1">
-                              ({sellOrder.priceDiff > 0 ? '+' : ''}{sellOrder.priceDiff})
-                            </span>
+                  console.log(`sellOrder.qty: ${sellOrder.qty}, buyOrder.qty: ${buyOrder.qty}, qtyDiff: ${qtyDiff}`); // Debugging
+
+                  return (
+                    <Card
+                      key={sellOrder.orderId}
+                      className={cn(
+                        "p-4 cursor-pointer transition-all",
+                        "border-zinc-700 hover:border-blue-500",
+                        selectedOrder?.orderId === sellOrder.orderId && "border-blue-500 bg-blue-500/10"
+                      )}
+                      onClick={() => handleOrderSelect(sellOrder)}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            "text-xs",
+                            matchPercentage >= 90 ? "bg-green-500/20 text-green-400" :
+                              matchPercentage >= 70 ? "bg-yellow-500/20 text-yellow-400" :
+                                "bg-red-500/20 text-red-400"
                           )}
-                        </span>
+                        >
+                          {matchPercentage.toFixed(1)}% Match
+                        </Badge>
+                        <span className="text-xs text-zinc-400">ID: {sellOrder.orderId}</span>
                       </div>
-                      <div>
-                        <span className="text-zinc-400">Qty:</span>
-                        <span className={cn(
-                          "ml-2 font-medium",
-                          sellOrder.qtyDiff > 0 ? "text-red-400" :
-                            sellOrder.qtyDiff < 0 ? "text-green-400" : "text-white"
-                        )}>
-                          {sellOrder.qty}
-                          {sellOrder.qtyDiff !== 0 && (
-                            <span className="text-xs ml-1">
-                              ({sellOrder.qtyDiff > 0 ? '+' : ''}{sellOrder.qtyDiff})
-                            </span>
-                          )}
-                        </span>
+
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <span className="text-zinc-400">Price:</span>
+                          <span className={cn(
+                            "ml-2 font-medium",
+                            priceDiff > 0 ? "text-red-400" :
+                              priceDiff < 0 ? "text-green-400" : "text-white"
+                          )}>
+                            ${formatNumber(sellOrder.price, 'price')}
+                            {priceDiff !== 0 && (
+                              <span className="text-xs ml-1">
+                                {priceDiff > 0 ? '+' : ''}{formatNumber(priceDiff, 'price')}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-zinc-400">Qty:</span>
+                          <span className={cn(
+                            "ml-2 font-medium",
+                            qtyDiff > 0 ? "text-green-400" :
+                              qtyDiff < 0 ? "text-red-400" : "text-white"
+                          )}>
+                            {formatNumber(sellOrder.qty, 'qty')}
+                            {qtyDiff > 0 && (
+                              <span className="text-xs ml-1">
+                                +{formatNumber(qtyDiff, 'qty')}
+                              </span>
+                            )}
+                            {qtyDiff < 0 && (
+                              <span className="text-xs ml-1">
+                                {formatNumber(qtyDiff, 'qty')}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-zinc-400">Total:</span>
+                          <span className="ml-2 font-medium">
+                            ${formatNumber(sellOrder.price * sellOrder.qty, 'total')}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-zinc-400">Total:</span>
-                        <span className="ml-2 font-medium">
-                          ${(sellOrder.price * sellOrder.qty).toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+                    </Card>
+                  );
+                })}
               </div>
             </div>
 

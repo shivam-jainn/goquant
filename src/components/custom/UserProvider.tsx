@@ -6,10 +6,13 @@ import { e_OrderBookAccountType, useOrderBookStore } from "@/stores/orderbook-st
 import OrderMatcher from "@/components/custom/Tables/Manager/OrderMatcher/OrderMatcher";
 import { Card } from "@/components/ui/card";
 import CandlestickChart from "./Charts/CandleStickChart";
+import { useSimulator } from "@/lib/websockets/simulation";
 
 export default function UserProvider() {
   const orderBookState = useOrderBookStore();
   const [isLoading, setIsLoading] = useState(true);
+
+  const { sendAction, readyState } = useSimulator();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -19,9 +22,21 @@ export default function UserProvider() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (readyState === WebSocket.OPEN) {
+      console.log("WebSocket connected, subscribing to BTCUSDT");
+      
+      sendAction('SUBSCRIBE', { 
+        symbol: 'BTCUSDT'
+      });
+
+      orderBookState.setAsset('BTCUSDT');
+    }
+  }, [readyState, sendAction, orderBookState.setAsset]);
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-zinc-900">
+      <div className="flex items-center justify-center h-screen ">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
       </div>
     );

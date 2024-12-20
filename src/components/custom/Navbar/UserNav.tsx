@@ -1,4 +1,6 @@
 "use client";
+
+import { useRouter } from 'next/navigation';
 import {
     Avatar,
     AvatarFallback,
@@ -15,10 +17,11 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
   import { useOrderBookStore, e_OrderBookAccountType } from "@/stores/orderbook-store";
-  
+
   export function UserNav() {
     const {role,setRole,reset} = useOrderBookStore();
-  
+    const router = useRouter();
+
     const toggleAccountType = () => {
       setRole(
         role === e_OrderBookAccountType.client
@@ -26,19 +29,17 @@ import {
           : e_OrderBookAccountType.client
       );
     };
-  
+
+    const handleLogoClick = () => {
+      router.push("/");
+    };
+
     return (
       <div className="flex items-center justify-between m-3 border-[1px] border-gray/200 rounded-md px-4 py-2 shadow-md">
-        {/* Logo Section */}
-        <div className="flex items-center gap-2">
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="h-8 w-8"
-          />
-        </div>
-  
-        {/* User Dropdown Section */}
+        <button className="flex items-center gap-2 font-apple cursor-pointer" onClick={handleLogoClick}>
+          <span><b className="text-green-400 cursor-pointer">Go</b>Quant</span>
+        </button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -59,7 +60,6 @@ import {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {/* Toggle Account Type */}
               <DropdownMenuItem
                 onClick={toggleAccountType}
                 className="flex items-center justify-between"
@@ -72,7 +72,7 @@ import {
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={()=>reset()}
+                onClick={() => reset()}
                 className="flex items-center justify-between"
               >
                 <span>Reset state</span>
@@ -83,4 +83,3 @@ import {
       </div>
     );
   }
-  
