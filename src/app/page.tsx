@@ -1,4 +1,3 @@
-"use client";
 import UserProvider from "@/components/custom/UserProvider";
 
 export default function Page() {
